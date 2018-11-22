@@ -12,6 +12,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Patpedhi.Infrastructure.Data;
 using Patpedhi.Infrastructure.Identity;
+using Patpedhi.Web.Interfaces;
+using Patpedhi.Web.Services;
 using PatPedhi.Core.Interfaces;
 
 namespace Patpedhi.Web
@@ -42,17 +44,24 @@ namespace Patpedhi.Web
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
+            services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<PatpedhiContext>()
                 .AddDefaultTokenProviders();
 
             services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
             services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));
 
+            services.AddScoped<IUserProfileService, UserProfileService>();
+
             // Add memory cache services
             services.AddMemoryCache();
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+                .AddJsonOptions(options =>
+                {
+                    options.SerializerSettings.DateFormatString = "dd/MM/yyyy";
+                });
 
             _services = services;
         }

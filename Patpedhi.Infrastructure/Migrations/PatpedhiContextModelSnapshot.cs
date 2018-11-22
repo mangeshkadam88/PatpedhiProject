@@ -128,6 +128,14 @@ namespace Patpedhi.Infrastructure.Migrations
 
                     b.Property<DateTime?>("modified_date");
 
+                    b.Property<string>("profile_photo_url")
+                        .HasColumnType("varchar")
+                        .HasMaxLength(5000);
+
+                    b.Property<string>("signature_photo_url")
+                        .HasColumnType("varchar")
+                        .HasMaxLength(5000);
+
                     b.HasKey("Id");
 
                     b.ToTable("UserProfile");
@@ -140,6 +148,10 @@ namespace Patpedhi.Infrastructure.Migrations
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
+
+                    b.Property<DateTime>("CreatedDate");
+
+                    b.Property<string>("Description");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256);

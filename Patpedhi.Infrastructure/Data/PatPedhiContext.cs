@@ -46,6 +46,13 @@ namespace Patpedhi.Infrastructure.Data
             builder.Property(ci => ci.is_approved)
                 .IsRequired(true);
 
+            builder.Property(ci => ci.profile_photo_url)
+                .HasColumnType("varchar")
+                .HasMaxLength(5000);
+            builder.Property(ci => ci.signature_photo_url)
+                .HasColumnType("varchar")
+                .HasMaxLength(5000);
+
         }
     }
 }

@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Patpedhi.Infrastructure.Identity;
+using Patpedhi.Web.Interfaces;
 using Patpedhi.Web.ViewModels.Account;
+using PatPedhi.Core.Entities.Identity;
 using System.Threading.Tasks;
 
 namespace Patpedhi.Web.Controllers
@@ -13,12 +15,16 @@ namespace Patpedhi.Web.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IUserProfileService _userProfileService;
+
         public AccountController(
             UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager)
+            SignInManager<ApplicationUser> signInManager,
+            IUserProfileService userProfileService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _userProfileService = userProfileService;
         }
 
         [AllowAnonymous]
@@ -38,8 +44,14 @@ namespace Patpedhi.Web.Controllers
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    await _signInManager.SignInAsync(user, isPersistent: false);
-                    return RedirectToLocal(returnUrl);
+                    await _userManager.AddToRoleAsync(user, "ClientDaily");
+
+                    UserProfile user_profile = await _userProfileService.CreateUserProfile(model);
+                    user.UserProfile = user_profile;
+                    await _userManager.UpdateAsync(user);
+
+                    ////await _signInManager.SignInAsync(user, isPersistent: false);
+                    ////return RedirectToLocal(returnUrl);
                 }
                 AddErrors(result);
             }
