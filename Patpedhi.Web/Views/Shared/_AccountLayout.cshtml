@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@{ 
+    string account_alias = (string)ViewData["AccountAlias"];
+}
+
+<!DOCTYPE html>
 
 <html>
 <head>
@@ -29,12 +33,12 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 
 </head>
-<body class="hold-transition register-page">
-    <div class="register-box">
-        <div class="register-logo">
-            <a href="../../index2.html"><b>XYZ</b>Patpedhi</a>
+<body class="hold-transition @account_alias-page">
+    <div class="@account_alias-box">
+        <div class="@account_alias-logo">
+            <a href="../../index2.html"><b>Akansha</b>Patpedhi</a>
         </div>
-        <div class="register-box-body">
+        <div class="@account_alias-box-body">
             @RenderBody()
         </div>
         <!-- /.form-box -->

@@ -1,35 +1,89 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Patpedhi.Infrastructure.Identity;
 using Patpedhi.Web.Interfaces;
 using Patpedhi.Web.ViewModels.Account;
 using PatPedhi.Core.Entities.Identity;
+using System;
 using System.Threading.Tasks;
 
 namespace Patpedhi.Web.Controllers
 {
     [Route("[controller]/[action]")]
     [Authorize]
-    public class AccountController : Controller
+    public class AccountController : BaseController
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly IUserProfileService _userProfileService;
-
-        public AccountController(
-            UserManager<ApplicationUser> userManager,
+        public AccountController(UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            IUserProfileService userProfileService)
+            IUserProfileService userProfileService) : base(userManager, signInManager, userProfileService)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _userProfileService = userProfileService;
+
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> SignIn(string returnUrl = null)
+        {
+            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+
+            ViewData["ReturnUrl"] = returnUrl;
+            if (string.IsNullOrEmpty(returnUrl))
+            {
+                ViewData["ReturnUrl"] = "/UserProfiles/";
+            }
+            ViewData["AccountAlias"] = "login";
+            return View();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SignIn(LoginViewModel model, string returnUrl = null)
+        {
+            ViewData["AccountAlias"] = "login";
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            ViewData["ReturnUrl"] = returnUrl;
+
+            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
+            //if (result.RequiresTwoFactor)
+            //{
+            //    return RedirectToAction(nameof(LoginWith2fa), new { returnUrl, model.RememberMe });
+            //}
+            if (result.Succeeded)
+            {                
+                return RedirectToLocal(returnUrl);
+            }
+            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+            
+            return View(model);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult Lockout()
+        {
+            return View();
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> SignOut()
+        {
+            await _signInManager.SignOutAsync();
+
+            return RedirectToAction(nameof(AccountController.SignIn));
         }
 
         [AllowAnonymous]
         public IActionResult Register()
         {
+            ViewData["AccountAlias"] = "register";
             return View();
         }
 
@@ -46,7 +100,7 @@ namespace Patpedhi.Web.Controllers
                 {
                     await _userManager.AddToRoleAsync(user, "ClientDaily");
 
-                    UserProfile user_profile = await _userProfileService.CreateUserProfile(model);
+                    UserProfile user_profile = await _userProfileService.CreateUserProfile(model, user.Id);
                     user.UserProfile = user_profile;
                     await _userManager.UpdateAsync(user);
 

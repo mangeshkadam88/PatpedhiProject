@@ -46,6 +46,7 @@ namespace Patpedhi.Web
 
             services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<PatpedhiContext>()
+                .AddDefaultUI()
                 .AddDefaultTokenProviders();
 
             services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
@@ -102,7 +103,7 @@ namespace Patpedhi.Web
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=Account}/{action=SignIn}/{id?}");
             });
         }
     }

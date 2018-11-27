@@ -18,7 +18,7 @@ namespace Patpedhi.Infrastructure.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            builder.Entity<UserProfile>(ConfigureUserProfile);
+            builder.Entity<UserProfile>(ConfigureUserProfile);            
         }
 
         private void ConfigureUserProfile(EntityTypeBuilder<UserProfile> builder)
@@ -30,7 +30,7 @@ namespace Patpedhi.Infrastructure.Data
                 .IsRequired(true)
                 .HasMaxLength(50);
 
-            builder.Property(ci => ci.middle_name)                
+            builder.Property(ci => ci.middle_name)
                 .HasMaxLength(50);
 
             builder.Property(ci => ci.last_name)
@@ -52,6 +52,12 @@ namespace Patpedhi.Infrastructure.Data
             builder.Property(ci => ci.signature_photo_url)
                 .HasColumnType("varchar")
                 .HasMaxLength(5000);
+
+            builder.Property(ci => ci.user_id)
+                .IsRequired(true);
+
+            builder.Property(ci => ci.account_no)
+                .IsRequired(false);
 
         }
     }

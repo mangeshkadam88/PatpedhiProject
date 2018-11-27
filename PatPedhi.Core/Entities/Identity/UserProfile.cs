@@ -14,5 +14,7 @@ namespace PatPedhi.Core.Entities.Identity
         public bool is_approved { get; set; }
         public string profile_photo_url { get; set; }
         public string signature_photo_url { get; set; }
+        public Guid user_id { get; set; }
+        public long? account_no { get; set; }
     }
 }

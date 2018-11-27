@@ -43,5 +43,9 @@ namespace Patpedhi.Web.ViewModels.Account
         [DataType(DataType.Date)]
         [Display(Name = "Date of Birth")]
         public string DateofBirth { get; set; }
+
+        [Required]
+        [Display(Name = "Account Number")]
+        public string AccountNo { get; set; }
     }
 }

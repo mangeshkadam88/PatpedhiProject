@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PatPedhi.Core.Entities;
 using PatPedhi.Core.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -25,7 +26,7 @@ namespace Patpedhi.Infrastructure.Data
             return SpecificationEvaluator<T>.GetQuery(_dbContext.Set<T>().AsQueryable(), spec);
         }
 
-        public virtual T GetById(int id)
+        public virtual T GetById(Guid id)
         {
             return _dbContext.Set<T>().Find(id);
         }
@@ -36,9 +37,14 @@ namespace Patpedhi.Infrastructure.Data
         }
 
 
-        public virtual async Task<T> GetByIdAsync(int id)
+        public virtual async Task<T> GetByIdAsync(Guid id)
         {
             return await _dbContext.Set<T>().FindAsync(id);
+        }
+
+        public async Task<T> GetSingleBySpecAsync(ISpecification<T> spec)
+        {
+            return await ApplySpecification(spec).FirstOrDefaultAsync();
         }
 
         public IEnumerable<T> ListAll()
