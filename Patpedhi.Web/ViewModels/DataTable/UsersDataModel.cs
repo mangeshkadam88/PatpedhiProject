@@ -14,5 +14,6 @@ namespace Patpedhi.Web.ViewModels.DataTable
         public string date_of_birth_string { get; set; }
         public string role_string { get; set; }
         public string is_approved_string { get; set; }
+        public string is_active_string { get; set; }
     }
 }

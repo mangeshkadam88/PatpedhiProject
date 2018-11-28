@@ -1,0 +1,252 @@
+﻿@using Patpedhi.Web.ViewModels.Account
+@model RegisterViewModel
+@{
+    ViewData["Title"] = "Save User";
+    Layout = "~/Views/Shared/_MainLayout.cshtml";
+    Patpedhi.Infrastructure.Identity.ApplicationUser logged_in_user = ViewBag.loggedinuser;
+    string loggedinuserrole = ViewBag.loggedinuserroles;
+    string mode = ViewBag.Mode;
+    string current_role = ViewBag.CurrentRole;
+}
+
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h1>
+        Save User
+        <small></small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="/UserProfiles/"><i class="fa fa-users"></i> User Profiles</a></li>
+        <li class="active">Save User</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-md-3"></div>
+        <!-- column -->
+        <div class="col-md-6">
+            <!-- general form elements -->
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Save User</h3>
+                </div>
+                <!-- /.box-header -->
+                <!-- form start -->
+                <form id="register-form" asp-controller="UserProfile" asp-action="Save" method="post" enctype="multipart/form-data">
+                    <input type="hidden" asp-for="UserId" />
+                    <input type="hidden" id="mode" name="mode" value="@mode" />
+                    <input type="hidden" id="current_role" name="current_role" value="@current_role" />
+                    <input type="hidden" asp-for="IsActive" />
+                    <div class="box-body">
+                        <div class="form-group has-feedback">
+                            <label asp-for="FirstName">First Name</label>
+                            <input asp-for="FirstName" type="text" class="form-control" placeholder="First name">
+                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label asp-for="MiddleName">Middle Name</label>
+                            <input asp-for="MiddleName" type="text" class="form-control" placeholder="Middle name">
+                            <span asp-validation-for="MiddleName" class="text-danger"></span>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label asp-for="LastName">Last Name</label>
+                            <input asp-for="LastName" type="text" class="form-control" placeholder="Last name">
+                            <span asp-validation-for="LastName" class="text-danger"></span>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label asp-for="DateofBirth">Date of Birth</label>
+                            <input asp-for="DateofBirth" type="text" class="form-control datemask" placeholder="Date of Birth" data-inputmask="'alias': 'dd/mm/yyyy'" data-mask>
+                            <span asp-validation-for="DateofBirth" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Email">Email</label>
+                            @if (mode == "update")
+                            {
+                                <input type="email" class="form-control" asp-for="Email" placeholder="Enter email" readonly="readonly">
+                            }
+                            else
+                            {
+                                <input type="email" class="form-control" asp-for="Email" placeholder="Enter email">
+                            }
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label asp-for="AccountNo">Account Number</label>
+                            <input asp-for="AccountNo" type="text" class="form-control" placeholder="Account Number">
+                            <span asp-validation-for="AccountNo" class="text-danger"></span>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label asp-for="RoleName">Select Role</label>
+                            <select asp-for="RoleName" asp-items="@ViewBag.Roles" class="form-control"></select>
+                        </div>
+                        @if (mode == "insert")
+                        {
+                            <div class="form-group has-feedback">
+                                <label asp-for="Password">Password</label>
+                                <input asp-for="Password" type="password" class="form-control" placeholder="Password">
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
+                            <div class="form-group has-feedback">
+                                <label asp-for="ConfirmPassword">Confirm Password</label>
+                                <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Retype password">
+                                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                            </div>
+                        }
+                        <div class="form-group">
+                            <label>upload profile photo</label>
+                            <input type="file" name="file_profile" id="profile_photo" accept="image/*" class="form-control-break" />
+                            @if (mode == "update")
+                            {
+                                if (string.IsNullOrEmpty(Model.ProfilePhotoURL))
+                                {
+                                    <img src="/user_images/default-avatar.png" height="120" width="120" />
+                                }
+                                else
+                                {
+                                    <img src="@Url.Content(Model.ProfilePhotoURL.Replace("wwwroot",""))" height="120" width="120" />
+                                }
+                            }
+                        </div>
+                        <div class="form-group">
+                            <label>upload signature photo</label>
+                            <input type="file" name="file_signature" id="signature_photo" accept="image/*" class="form-control-break" />
+                            @if (mode == "update")
+                            {
+                                if (string.IsNullOrEmpty(Model.SignaturePhotoURL))
+                                {
+                                    <img src="/user_signatures/default-signature.jpg" height="120" width="120" />
+                                }
+                                else
+                                {
+                                    <img src="@Url.Content(Model.SignaturePhotoURL.Replace("wwwroot",""))" height="120" width="120" />
+                                }
+                            }
+                        </div>
+                        @if (loggedinuserrole.ToUpper() == "SUPERADMIN")
+                        {
+
+                            <div class="checkbox">
+                                <label>
+                                    <input asp-for="IsApproved" type="checkbox"> <strong>Is Approved?</strong>
+                                </label>
+                            </div>
+
+                        }
+                        else
+                        {
+                            <input type="hidden" asp-for="IsApproved" />
+                        }
+                    </div>
+                    <!-- /.box-body -->
+                    <div class="box-footer">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+            <!-- /.box -->
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+    <!-- /.row -->
+</section>
+<!-- /.content -->
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#register-form').bootstrapValidator({
+                message: 'This value is not valid',
+                feedbackIcons: {
+                    valid: 'glyphicon glyphicon-ok',
+                    invalid: 'glyphicon glyphicon-remove',
+                    validating: 'glyphicon glyphicon-refresh'
+                },
+                fields: {
+                    FirstName: {
+                        validators: {
+                            notEmpty: {
+                                message: 'The first name is required and cannot be empty'
+                            }
+                        }
+                    },
+                    MiddleName: {
+                        validators: {
+                            notEmpty: {
+                                message: 'The middle name is required and cannot be empty'
+                            }
+                        }
+                    },
+                    LastName: {
+                        validators: {
+                            notEmpty: {
+                                message: 'The last name is required and cannot be empty'
+                            }
+                        }
+                    },
+                    Email: {
+                        validators: {
+                            notEmpty: {
+                                message: 'The email is required and cannot be empty'
+                            },
+                            emailAddress: {
+                                message: 'The input is not a valid email address'
+                            }
+                        }
+                    },
+                    AccountNo: {
+                        validators: {
+                            notEmpty: {
+                                message: 'The account number is required and cannot be empty'
+                            }
+                        }
+                    },
+                    Password: {
+                        validators: {
+                            notEmpty: {
+                                message: 'The password is required and cannot be empty'
+                            },
+                            identical: {
+                                field: 'ConfirmPassword',
+                                message: 'The password and its confirm are not the same'
+                            },
+                            different: {
+                                field: 'Email',
+                                message: 'The password cannot be the same as email'
+                            }
+                        }
+                    },
+                    ConfirmPassword: {
+                        validators: {
+                            notEmpty: {
+                                message: 'The confirm password is required and cannot be empty'
+                            },
+                            identical: {
+                                field: 'Password',
+                                message: 'The password and its confirm are not the same'
+                            },
+                            different: {
+                                field: 'Email',
+                                message: 'The password cannot be the same as email'
+                            }
+                        }
+                    },
+                    DateofBirth: {
+                        validators: {
+                            notEmpty: {
+                                message: 'The date of birth is required and cannot be empty'
+                            },
+                            date: {
+                                format: 'DD/MM/YYYY',
+                                message: 'The birthday is not valid'
+                            }
+                        }
+                    }
+                }
+            });
+
+
+        });
+    </script>
+}

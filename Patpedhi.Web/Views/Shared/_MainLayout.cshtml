@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="/bower_components/Ionicons/css/ionicons.min.css">
     <!-- DataTables -->
     <link rel="stylesheet" href="/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
+    <link href="/plugins/datatables-responsive/datatables-responsive.css" rel="stylesheet" />
     <!-- daterange picker -->
     <link rel="stylesheet" href="/bower_components/bootstrap-daterangepicker/daterangepicker.css">
     <!-- bootstrap datepicker -->
@@ -31,11 +32,16 @@
     <link rel="stylesheet" href="/plugins/timepicker/bootstrap-timepicker.min.css">
     <!-- Select2 -->
     <link rel="stylesheet" href="/bower_components/select2/dist/css/select2.min.css">
+    <!-- Bootstrap Validator -->
+    <link href="/plugins/bootstrap-validator/dist/css/bootstrapValidator.css" rel="stylesheet" />
+    <!-- Toastr -->
+    <link href="/plugins/toastr/toastr.css" rel="stylesheet" />
     <!-- Theme style -->
     <link rel="stylesheet" href="/dist/css/AdminLTE.min.css">
     <!-- AdminLTE Skins. Choose a skin from the css/skins
          folder instead of downloading all of them to reduce the load. -->
     <link rel="stylesheet" href="/dist/css/skins/_all-skins.min.css">
+    <link href="/css/site-main.css" rel="stylesheet" />
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -136,15 +142,15 @@
                     </li>
                     <li class="treeview">
                         <a href="#">
-                            <i class="fa fa-files-o"></i>
+                            <i class="fa fa-users"></i>
                             <span>Manage Users and Clients</span>
                             <span class="pull-right-container">
                                 <i class="fa fa-angle-left pull-right"></i>
                             </span>
                         </a>
                         <ul class="treeview-menu">
-                            <li><a href="/UserProfiles/"><i class="fa fa-circle-o"></i> Users</a></li>
-                            <li><a href="/UserProfiles/Save"><i class="fa fa-circle-o"></i> Create</a></li>
+                            <li><a href="/UserProfiles/"><i class="fa fa-user"></i> Users</a></li>
+                            <li><a href="/UserProfiles/Save"><i class="fa fa-user-plus"></i> Create</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -195,11 +201,15 @@
     <!-- ./wrapper -->
     <!-- jQuery 3 -->
     <script src="/bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="/lib/jquery-validation/dist/jquery.validate.js"></script>
+    <script src="/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
     <!-- Bootstrap 3.3.7 -->
     <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <!-- DataTables -->
     <script src="/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="/plugins/datatables-responsive/dataTables.responsive.js"></script>
     <script src="/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+
     <!-- Select2 -->
     <script src="/bower_components/select2/dist/js/select2.full.min.js"></script>
     <!-- InputMask -->
@@ -221,77 +231,16 @@
     <script src="/plugins/iCheck/icheck.min.js"></script>
     <!-- FastClick -->
     <script src="/bower_components/fastclick/lib/fastclick.js"></script>
+    <!-- Bootstrap Validator -->
+    <script src="/plugins/bootstrap-validator/dist/js/bootstrapValidator.js"></script>
+    <!-- Toastr -->
+    <script src="/plugins/toastr/toastr.min.js"></script>
     <!-- AdminLTE App -->
     <script src="/dist/js/adminlte.min.js"></script>
     <!-- AdminLTE for demo purposes -->
     <script src="/dist/js/demo.js"></script>
-    <!-- Page script -->
-    <script>
-        $(function () {
-            //Initialize Select2 Elements
-            $('.select2').select2()
-
-            //Datemask dd/mm/yyyy
-            $('.datemask').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' })
-
-            //Money Euro
-            $('[data-mask]').inputmask()
-
-            //Date range picker
-            $('.daterange').daterangepicker()
-            //Date range picker with time picker
-            $('.daterangetime').daterangepicker({ timePicker: true, timePickerIncrement: 30, format: 'DD/MM/YYYY h:mm A' })
-            //Date range as a button
-            $('.daterange-btn').daterangepicker(
-                {
-                    ranges: {
-                        'Today': [moment(), moment()],
-                        'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-                        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-                        'This Month': [moment().startOf('month'), moment().endOf('month')],
-                        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-                    },
-                    startDate: moment().subtract(29, 'days'),
-                    endDate: moment()
-                },
-                function (start, end) {
-                    $('.daterange-btn span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'))
-                }
-            )
-
-            //Date picker
-            $('.datepicker').datepicker({
-                autoclose: true
-            })
-
-            //iCheck for checkbox and radio inputs
-            $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
-                checkboxClass: 'icheckbox_minimal-blue',
-                radioClass: 'iradio_minimal-blue'
-            })
-            //Red color scheme for iCheck
-            $('input[type="checkbox"].minimal-red, input[type="radio"].minimal-red').iCheck({
-                checkboxClass: 'icheckbox_minimal-red',
-                radioClass: 'iradio_minimal-red'
-            })
-            //Flat red color scheme for iCheck
-            $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
-                checkboxClass: 'icheckbox_flat-green',
-                radioClass: 'iradio_flat-green'
-            })
-
-            //Colorpicker
-            $('.my-colorpicker1').colorpicker()
-            //color picker with addon
-            $('.my-colorpicker2').colorpicker()
-
-            //Timepicker
-            $('.timepicker').timepicker({
-                showInputs: false
-            })
-        })</script>
-
+    <!-- Common script -->
+    <script src="/js/common.js"></script>
     @RenderSection("Scripts", required: false)
 
 </body>

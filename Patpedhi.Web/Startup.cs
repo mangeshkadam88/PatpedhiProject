@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -57,12 +53,18 @@ namespace Patpedhi.Web
             // Add memory cache services
             services.AddMemoryCache();
 
+            services.Configure<CookieTempDataProviderOptions>(options => {
+                options.Cookie.IsEssential = true;
+            });
+
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+                
                 .AddJsonOptions(options =>
                 {
                     options.SerializerSettings.DateFormatString = "dd/MM/yyyy";
-                });
+                })                
+                ;
 
             _services = services;
         }
@@ -71,8 +73,8 @@ namespace Patpedhi.Web
         {
             // use in-memory database
             services.AddDbContext<PatpedhiContext>(c =>
-                c.UseSqlServer(Configuration.GetConnectionString("SQLDBConnectionLocal"), 
-                x=> x.MigrationsAssembly("Patpedhi.Infrastructure")));
+                c.UseSqlServer(Configuration.GetConnectionString("SQLDBConnectionLocal"),
+                x => x.MigrationsAssembly("Patpedhi.Infrastructure")));
         }
 
         public void ConfigureProductionServices(IServiceCollection services)
@@ -96,14 +98,15 @@ namespace Patpedhi.Web
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            
             app.UseAuthentication();
             app.UseCookiePolicy();
-
+            
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Account}/{action=SignIn}/{id?}");
+                    template: "{controller=Account}/{action=SignIn}");
             });
         }
     }

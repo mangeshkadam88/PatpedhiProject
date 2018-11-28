@@ -15,15 +15,18 @@ namespace Patpedhi.Web.Controllers
     [Authorize]
     public class AccountController : BaseController
     {
+        
         public AccountController(UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IUserProfileService userProfileService) : base(userManager, signInManager, userProfileService)
         {
-
+            
         }
 
         [HttpGet]
         [AllowAnonymous]
+        [Route("/")]
+        [Route("/[controller]")]
         public async Task<IActionResult> SignIn(string returnUrl = null)
         {
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);

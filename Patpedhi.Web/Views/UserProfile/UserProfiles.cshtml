@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewData["Title"] = "UserProfiles";
+    ViewData["Title"] = "User Profiles";
     Layout = "~/Views/Shared/_MainLayout.cshtml";
     Patpedhi.Infrastructure.Identity.ApplicationUser user = ViewBag.loggedinuser;
     string loggedinuserrole = ViewBag.loggedinuserroles;
@@ -29,30 +29,47 @@
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
-                    <table id="users" class="table table-striped table-bordered table-hover">
-                        <thead>
-                            <tr>
-                                <th>First Name</th>
-                                <th>Last Name</th>
-                                <th>DOB</th>
-                                <th>Role</th>
-                                <th>Is Approved</th>
-                                <th>Edit</th>
-                                <th>Delete</th>
-                            </tr>
-                        </thead>
-                        <tfoot>
-                            <tr>
-                                <th>First Name</th>
-                                <th>Last Name</th>
-                                <th>DOB</th>
-                                <th>Role</th>
-                                <th>Is Approved</th>
-                                <th>Edit</th>
-                                <th>Delete</th>
-                            </tr>
-                        </tfoot>
-                    </table>
+                    <div class="row row-break">
+                        <div class="col-sm-4">
+                            <select id="ddl_filter" class="form-control">
+                                <option value="active">Active</option>
+                                <option value="not_approved">Not Approved</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <table id="users" class="table responsive table-striped table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>First Name</th>
+                                        <th>Last Name</th>
+                                        <th>DOB</th>
+                                        <th>Role</th>
+                                        <th>Is Approved</th>
+                                        <th>Is Active</th>
+                                        <th>Edit</th>
+                                        <th>Delete</th>
+                                    </tr>
+                                </thead>
+
+                                <tfoot>
+                                    <tr>
+                                        <th>First Name</th>
+                                        <th>Last Name</th>
+                                        <th>DOB</th>
+                                        <th>Role</th>
+                                        <th>Is Approved</th>
+                                        <th>Is Active</th>
+                                        <th>Edit</th>
+                                        <th>Delete</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                    
                 </div>
                 <!-- /.box-body -->
             </div>
@@ -66,28 +83,59 @@
 
 @section Scripts{
     <script type="text/javascript">
-        $(document).ready(function(){
+        $(document).ready(function () {            
+            var show_notification = '@TempData["SavedSuccessfully"]';
+            if (show_notification) {
+                toastr.success('User data has been saved successfully!');
+            }
 
-        $('#users').dataTable({
-        "processing": true,
-        "pagingType": "full_numbers",
-        "ajax": {
-        "url": '@Url.Action("GetUsers")',
-        "type": "POST",
-        "data": function (d) {
-            d.role = '@loggedinuserrole'
-        }
-        },
-        "columns": [
-        { data: 'first_name' },
-        { data: 'last_name' },
-        { data: 'date_of_birth_string' },
-        { data: 'role_string' },
-            { data: 'is_approved_string' },
-            { data: 'user_id' },
-            { data: 'user_id' }
-        ]
-        });
+            $('#users').dataTable({
+                "processing": true,
+                "pagingType": "full_numbers",
+                "ajax": {
+                "url": '@Url.Action("GetUsers")',
+                "type": "POST",
+                "data": function (d) {
+                    d.role = '@loggedinuserrole',
+                    d.filter = $('#ddl_filter').val()
+                }
+                },
+                "columns": [
+                    { data: 'first_name' },
+                    { data: 'last_name' },
+                    { data: 'date_of_birth_string' },
+                    { data: 'role_string' },
+                    { data: 'is_approved_string' },
+                    { data: 'is_active_string' },
+                    { data: 'user_id' },
+                    { data: 'user_id' }
+                ],
+                "columnDefs": [
+                    {
+                        "render": function (data, type, row) {
+                            return '<a href=\"/UserProfiles/Save/' + data + '\" class=\"btn btn-primary\" title=\"Edit\" ><i class=\"fa fa-pencil\" ></i>&nbsp;Edit</a>';
+                        },
+                        "searchable": false,
+                        "orderable": false,
+                        "targets": 6
+                    },
+                    {
+                        "render": function (data, type, row) {
+                            return '<a href=\"/UserProfiles/Save/' + data + '\" class=\"btn btn-danger\" title=\"Delete\" onclick=\"return confirm(\'Are you sure want to delete this user?\')\" ><i class=\"fa fa-trash\" ></i>&nbsp;Delete</a>';
+                        },
+                        "searchable": false,
+                        "orderable": false,
+                        "targets": 7
+                    }
+                ]
+            });
+
+            $('#ddl_filter').on('change', function () {
+                var table = $('#users').DataTable();
+                table.ajax.reload(function (data) {
+                    table.columns.adjust().responsive.recalc();
+                }, false);
+            });
 
         });
     </script>

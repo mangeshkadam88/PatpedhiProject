@@ -1,23 +1,26 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System;
 
 namespace Patpedhi.Web.ViewModels.Account
 {
     public class RegisterViewModel
     {
+        public Guid UserId { get; set; }
+
         [Required]
         [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; set; }
 
-        [Required]
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
+        //[Required]
+        //[StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
         public string Password { get; set; }
 
         [DataType(DataType.Password)]
         [Display(Name = "Confirm password")]
-        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+        //[Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
 
         [Required]
@@ -46,6 +49,17 @@ namespace Patpedhi.Web.ViewModels.Account
 
         [Required]
         [Display(Name = "Account Number")]
-        public string AccountNo { get; set; }
+        public long AccountNo { get; set; }
+
+        [Display(Name = "Active")]
+        public bool IsActive { get; set; }
+
+        [Display(Name = "Approved")]
+        public bool IsApproved { get; set; }
+
+        public string RoleName { get; set; }
+
+        public string ProfilePhotoURL { get; set; }
+        public string SignaturePhotoURL { get; set; }
     }
 }

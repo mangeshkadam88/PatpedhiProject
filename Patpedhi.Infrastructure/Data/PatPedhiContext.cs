@@ -47,11 +47,10 @@ namespace Patpedhi.Infrastructure.Data
                 .IsRequired(true);
 
             builder.Property(ci => ci.profile_photo_url)
-                .HasColumnType("varchar")
-                .HasMaxLength(5000);
+                .HasColumnType("nvarchar(max)");
+
             builder.Property(ci => ci.signature_photo_url)
-                .HasColumnType("varchar")
-                .HasMaxLength(5000);
+                .HasColumnType("nvarchar(max)");
 
             builder.Property(ci => ci.user_id)
                 .IsRequired(true);

@@ -14,6 +14,8 @@ namespace Patpedhi.Web.Interfaces
     {
         Task<UserProfile> CreateUserProfile(RegisterViewModel userProfileModel, Guid Id);
         Task<UserProfile> GetUserProfileById(Guid Id);
-        Task<List<UsersDataModel>> GetAllUsersForCurrentUser(string role, UserManager<ApplicationUser> _userManager);
+        Task<List<UsersDataModel>> GetAllUsersForCurrentUser(string role, UserManager<ApplicationUser> _userManager, string filter);
+
+        Task<UserProfile> UpdateUserProfile(RegisterViewModel userProfileModel, Guid Id);
     }
 }
