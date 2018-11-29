@@ -17,5 +17,6 @@ namespace Patpedhi.Web.Interfaces
         Task<List<UsersDataModel>> GetAllUsersForCurrentUser(string role, UserManager<ApplicationUser> _userManager, string filter);
 
         Task<UserProfile> UpdateUserProfile(RegisterViewModel userProfileModel, Guid Id);
+        Task SetActiveUserProfile(Guid user_id, bool is_active);
     }
 }

@@ -52,14 +52,40 @@ namespace Patpedhi.Web.Controllers
             }
             ViewData["ReturnUrl"] = returnUrl;
 
-            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
-            //if (result.RequiresTwoFactor)
-            //{
-            //    return RedirectToAction(nameof(LoginWith2fa), new { returnUrl, model.RememberMe });
-            //}
-            if (result.Succeeded)
-            {                
-                return RedirectToLocal(returnUrl);
+            ApplicationUser app_user = await _userManager.FindByEmailAsync(model.Email);
+            if (app_user != null)
+            {
+                app_user.UserProfile = await _userProfileService.GetUserProfileById(app_user.Id);
+                if (app_user.UserProfile.is_active)
+                {
+                    var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
+                    //if (result.RequiresTwoFactor)
+                    //{
+                    //    return RedirectToAction(nameof(LoginWith2fa), new { returnUrl, model.RememberMe });
+                    //}
+                    if (result.Succeeded)
+                    {
+                        var current_user_roles = await _userManager.GetRolesAsync(app_user);
+                        string redirect_value = "";
+                        switch (current_user_roles[0].ToLower())
+                        {
+                            case "superadmin":
+                            case "admin":
+                                redirect_value = "/userprofiles/";
+                                break;
+                            case "employee":
+                                redirect_value = "/home/index";
+                                break;
+                            default:
+                                redirect_value = returnUrl;
+                                break;
+                        }
+
+                        return Redirect(redirect_value);
+                    }
+                }
+                else
+                    ModelState.AddModelError(string.Empty, "User is inactive.");
             }
             ModelState.AddModelError(string.Empty, "Invalid login attempt.");
             
@@ -80,7 +106,7 @@ namespace Patpedhi.Web.Controllers
         {
             await _signInManager.SignOutAsync();
 
-            return RedirectToAction(nameof(AccountController.SignIn));
+            return Redirect("/");
         }
 
         [AllowAnonymous]

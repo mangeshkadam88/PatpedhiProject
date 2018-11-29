@@ -85,13 +85,21 @@ namespace Patpedhi.Web.Controllers
                 user_to_save.SignaturePhotoURL = app_user.UserProfile.signature_photo_url;
                 mode = "update";
             }
+            else
+            {
+                user_to_save.IsActive = true;
+                user_to_save.IsApproved = false;
+            }
             List<SelectListItem> roles = new List<SelectListItem>();
             foreach (var item in _roleManager.Roles)
             {
-                SelectListItem list_item = new SelectListItem();
-                list_item.Text = item.Name;
-                list_item.Value = item.Name;
-                roles.Add(list_item);
+                if ((current_user_roles[0].ToLower() == "admin" && (item.Name.ToLower() != "superadmin" && item.Name.ToLower() != "admin")) || current_user_roles[0].ToLower() == "superadmin")
+                {
+                    SelectListItem list_item = new SelectListItem();
+                    list_item.Text = item.Name;
+                    list_item.Value = item.Name;
+                    roles.Add(list_item);
+                }
             }
 
             ViewBag.CurrentRole = current_role;
@@ -162,7 +170,7 @@ namespace Patpedhi.Web.Controllers
                     
                     UserProfile user_profile = await _userProfileService.UpdateUserProfile(model, user_to_save.Id);
 
-                    TempData["SavedSuccessfully"] = "true";
+                    TempData["ShowNotification"] = "User data has been saved successfully!";
                     return RedirectToAction("UserProfiles");
                 }
                 else
@@ -177,7 +185,7 @@ namespace Patpedhi.Web.Controllers
                         user_to_save.UserProfile = user_profile;
                         await _userManager.UpdateAsync(user_to_save);
 
-                        TempData["SavedSuccessfully"] = "true";
+                        TempData["ShowNotification"] = "User data has been saved successfully!";
                         return RedirectToAction("UserProfiles");
                     }
 
@@ -194,6 +202,15 @@ namespace Patpedhi.Web.Controllers
             {
                 ModelState.AddModelError("", error.Description);
             }
+        }
+
+        [HttpGet]
+        [Route("UserProfiles/SetActive/{user_id}/{is_active}")]
+        public async Task<IActionResult> SetActive(Guid user_id, bool is_active)
+        {
+            await _userProfileService.SetActiveUserProfile(user_id, is_active);
+            TempData["ShowNotification"] = "User data has been deleted successfully!";
+            return RedirectToAction("UserProfiles");
         }
     }
 }

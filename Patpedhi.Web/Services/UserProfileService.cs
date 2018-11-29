@@ -32,7 +32,7 @@ namespace Patpedhi.Web.Services
                 added_date = DateTime.Now,
                 modified_date = DateTime.Now,
                 is_active = true,
-                is_approved = false,
+                is_approved = model.IsApproved,
                 profile_photo_url = string.IsNullOrEmpty(model.ProfilePhotoURL) ? "" : model.ProfilePhotoURL,
                 signature_photo_url = string.IsNullOrEmpty(model.SignaturePhotoURL) ? "" : model.SignaturePhotoURL,
                 account_no = Convert.ToInt64(model.AccountNo),
@@ -114,6 +114,13 @@ namespace Patpedhi.Web.Services
             }
 
             return user_data_model_list;
+        }
+
+        public async Task SetActiveUserProfile(Guid user_id, bool is_active)
+        {
+            var user_profile = await GetUserProfileById(user_id);
+            user_profile.is_active = is_active;
+            await _userProfileRepository.UpdateAsync(user_profile);
         }
     }
 }

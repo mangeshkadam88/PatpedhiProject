@@ -84,9 +84,9 @@
 @section Scripts{
     <script type="text/javascript">
         $(document).ready(function () {            
-            var show_notification = '@TempData["SavedSuccessfully"]';
+            var show_notification = '@TempData["ShowNotification"]';
             if (show_notification) {
-                toastr.success('User data has been saved successfully!');
+                toastr.success(show_notification);
             }
 
             $('#users').dataTable({
@@ -121,7 +121,13 @@
                     },
                     {
                         "render": function (data, type, row) {
-                            return '<a href=\"/UserProfiles/Save/' + data + '\" class=\"btn btn-danger\" title=\"Delete\" onclick=\"return confirm(\'Are you sure want to delete this user?\')\" ><i class=\"fa fa-trash\" ></i>&nbsp;Delete</a>';
+                            console.log(row['is_active_string']);
+                            if (row['is_active_string'] == 'True') {
+                                return '<a href=\"/UserProfiles/SetActive/' + data + '/false\" class=\"btn btn-danger\" title=\"Delete\" onclick=\"return confirm(\'Are you sure want to delete this user?\')\" ><i class=\"fa fa-user-times\" ></i>&nbsp;Delete</a>';
+                            }
+                            else {
+                                return '<a href=\"/UserProfiles/SetActive/' + data + '/true\" class=\"btn btn-success\" title=\"Set Active\" onclick=\"return confirm(\'Are you sure want to set active this user?\')\" ><i class=\"fa fa-check\" ></i>&nbsp;Active</a>';
+                            }
                         },
                         "searchable": false,
                         "orderable": false,
