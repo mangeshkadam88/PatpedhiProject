@@ -1,0 +1,114 @@
+﻿@using Patpedhi.Web.ViewModels
+@model SavingsModel
+@{
+    ViewData["Title"] = "Save";
+    Layout = "~/Views/Shared/_MainLayout.cshtml";
+    Patpedhi.Infrastructure.Identity.ApplicationUser logged_in_user = ViewBag.loggedinuser;
+    string current_user_role = ViewBag.loggedinuserroles;
+    string mode = ViewBag.Mode;
+    Patpedhi.Infrastructure.Identity.ApplicationUser selected_user = ViewBag.selecteduser;
+    string selected_user_role = ViewBag.selecteduserroles;
+}
+
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h1>
+        Save User's Saving
+        <small></small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="/UsersSavings/"><i class="fa fa-user"></i> Savings users</a></li>
+        <li><a href="/Savings/List/@selected_user.Id"><i class="fa fa-bars"></i>List</a></li>
+        <li class="active">Save User's Saving</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-md-3"></div>
+        <!-- column -->
+        <div class="col-md-6">
+            <!-- general form elements -->
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Save User's Saving</h3>
+                </div>
+                <!-- /.box-header -->
+                <!-- form start -->
+                <form id="saving-form" asp-controller="Savings" asp-action="Save" method="post" enctype="multipart/form-data">
+                    <input type="hidden" asp-for="UserId" />
+                    <input type="hidden" asp-for="SavingId" />
+                    <input type="hidden" asp-for="IsActive" />
+                    <input type="hidden" id="mode" name="mode" value="@mode" />
+
+                    <input type="hidden" id="current_user_role" name="current_user_role" value="@current_user_role" />
+                    <input type="hidden" id="current_user_id" name="current_user_id" value="@logged_in_user.Id" />
+
+                    <input type="hidden" id="selected_user_role" name="selected_user_role" value="@selected_user_role" />
+                    <input type="hidden" id="selected_user_id" name="selected_user_id" value="@selected_user.Id" />
+
+
+                    <div class="box-body">
+                        <div class="form-group has-feedback">
+                            <label asp-for="Amount">Amount</label>
+                            <input asp-for="Amount" type="number" class="form-control" placeholder="Amount" step=".01">
+                            <span asp-validation-for="Amount" class="text-danger"></span>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label asp-for="Description">Description</label>
+                            <input asp-for="Description" type="text" class="form-control" placeholder="Description">
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+                        @if (current_user_role.ToUpper() == "SUPERADMIN" || current_user_role.ToUpper() == "ADMIN")
+                        {
+                            <div class="checkbox">
+                                <label>
+                                    <input asp-for="IsApproved" type="checkbox"> <strong>Is Approved?</strong>
+                                </label>
+                            </div>
+                        }
+                        else
+                        {
+                            <input type="hidden" asp-for="IsApproved" />
+                        }
+                    </div>
+                    <!-- /.box-body -->
+                    <div class="box-footer">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+            <!-- /.box -->
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+    <!-- /.row -->
+</section>
+<!-- /.content -->
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#saving-form').bootstrapValidator({
+                message: 'This value is not valid',
+                feedbackIcons: {
+                    valid: 'glyphicon glyphicon-ok',
+                    invalid: 'glyphicon glyphicon-remove',
+                    validating: 'glyphicon glyphicon-refresh'
+                },
+                fields: {
+                    Amount: {
+                        validators: {
+                            notEmpty: {
+                                message: 'The amount is required and cannot be empty'
+                            }
+                        }
+                    }
+                }
+            });
+
+
+        });
+    </script>
+}

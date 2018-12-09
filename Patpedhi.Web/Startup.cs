@@ -49,6 +49,7 @@ namespace Patpedhi.Web
             services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));
 
             services.AddScoped<IUserProfileService, UserProfileService>();
+            services.AddScoped<ISavingsService, SavingsService>();
 
             // Add memory cache services
             services.AddMemoryCache();

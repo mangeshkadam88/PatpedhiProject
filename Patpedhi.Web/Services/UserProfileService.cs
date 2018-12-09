@@ -69,20 +69,24 @@ namespace Patpedhi.Web.Services
             return user_profile;
         }
 
-        public async Task<List<UsersDataModel>> GetAllUsersForCurrentUser(string role, UserManager<ApplicationUser> _userManager, string filter)
+        public async Task<List<UsersDataModel>> GetAllUsersForCurrentUser(string role, UserManager<ApplicationUser> _userManager, string filter, string user_type)
         {
             List<UsersDataModel> user_data_model_list = new List<UsersDataModel>();
             List<ApplicationUser> usersInRole = new List<ApplicationUser>();
-            if (role == "SuperAdmin")
-                usersInRole.AddRange(_userManager.Users);
-            else if (role == "Admin")
+            if (!string.IsNullOrEmpty(user_type))
+                usersInRole.AddRange(await _userManager.GetUsersInRoleAsync(user_type));
+            else
             {
-                usersInRole.AddRange(await _userManager.GetUsersInRoleAsync("Employee"));
-                usersInRole.AddRange(await _userManager.GetUsersInRoleAsync("ClientDaily"));
-                usersInRole.AddRange(await _userManager.GetUsersInRoleAsync("ClientNormal"));
-                usersInRole.AddRange(await _userManager.GetUsersInRoleAsync("ClientLoan"));
+                if (role == "SuperAdmin")
+                    usersInRole.AddRange(_userManager.Users);
+                else if (role == "Admin")
+                {
+                    usersInRole.AddRange(await _userManager.GetUsersInRoleAsync("Employee"));
+                    usersInRole.AddRange(await _userManager.GetUsersInRoleAsync("ClientDaily"));
+                    usersInRole.AddRange(await _userManager.GetUsersInRoleAsync("ClientNormal"));
+                    usersInRole.AddRange(await _userManager.GetUsersInRoleAsync("ClientLoan"));
+                }
             }
-
             bool match_with_filter = false;
             foreach (ApplicationUser user in usersInRole)
             {
@@ -101,8 +105,9 @@ namespace Patpedhi.Web.Services
                     udm.first_name = user.UserProfile.first_name;
                     udm.middle_name = user.UserProfile.middle_name;
                     udm.last_name = user.UserProfile.last_name;
+                    udm.account_number = Convert.ToString(user.UserProfile.account_no);
                     udm.date_of_birth_string = user.UserProfile.date_of_birth.ToString("dd/MM/yyyy");
-
+                    
                     var roles = await _userManager.GetRolesAsync(user);
                     string role_name = roles.Count > 0 ? roles[0] : "Role Not Found!";
                     udm.role_string = role_name;
@@ -122,5 +127,7 @@ namespace Patpedhi.Web.Services
             user_profile.is_active = is_active;
             await _userProfileRepository.UpdateAsync(user_profile);
         }
+
+        
     }
 }

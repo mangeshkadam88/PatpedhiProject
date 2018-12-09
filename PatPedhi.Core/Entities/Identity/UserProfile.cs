@@ -16,5 +16,7 @@ namespace PatPedhi.Core.Entities.Identity
         public string signature_photo_url { get; set; }
         public Guid user_id { get; set; }
         public long? account_no { get; set; }
+
+        public string full_name => $"{first_name} {middle_name} {last_name}";
     }
 }

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Patpedhi.Infrastructure.Data;
 
 namespace Patpedhi.Infrastructure.Migrations
 {
     [DbContext(typeof(PatpedhiContext))]
-    partial class PatpedhiContextModelSnapshot : ModelSnapshot
+    [Migration("20181208141837_v5")]
+    partial class v5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -148,18 +150,9 @@ namespace Patpedhi.Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<Guid>("added_by");
-
                     b.Property<DateTime>("added_date");
 
                     b.Property<decimal>("amount");
-
-                    b.Property<Guid?>("approved_by");
-
-                    b.Property<DateTime?>("approved_on");
-
-                    b.Property<string>("description")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("is_active");
 

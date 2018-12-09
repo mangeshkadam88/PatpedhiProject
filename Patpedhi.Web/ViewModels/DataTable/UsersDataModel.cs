@@ -15,5 +15,6 @@ namespace Patpedhi.Web.ViewModels.DataTable
         public string role_string { get; set; }
         public string is_approved_string { get; set; }
         public string is_active_string { get; set; }
+        public string account_number { get; set; }
     }
 }

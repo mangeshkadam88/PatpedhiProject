@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Patpedhi.Infrastructure.Identity;
+using PatPedhi.Core.Entities;
 using PatPedhi.Core.Entities.Identity;
 using System;
 
@@ -18,7 +19,38 @@ namespace Patpedhi.Infrastructure.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            builder.Entity<UserProfile>(ConfigureUserProfile);            
+            builder.Entity<UserProfile>(ConfigureUserProfile);
+            builder.Entity<Savings>(ConfigureSavings);
+        }
+
+        private void ConfigureSavings(EntityTypeBuilder<Savings> builder)
+        {
+            builder.ToTable("Savings");
+            builder.HasKey(ci => ci.Id);
+
+            builder.Property(ci => ci.user_id)
+                .IsRequired(true);
+
+            builder.Property(ci => ci.amount)
+                .IsRequired(true);
+
+            builder.Property(ci => ci.is_active)
+                .IsRequired(true);
+
+            builder.Property(ci => ci.is_approved)
+                .IsRequired(true);
+
+            builder.Property(ci => ci.savings_type)
+                .IsRequired(true)
+                .HasMaxLength(50);
+
+            builder.Property(ci => ci.added_by)
+                .IsRequired(true);
+
+            builder.Property(ci => ci.approved_by);
+
+            builder.Property(ci => ci.description)
+                .HasColumnType("nvarchar(max)");
         }
 
         private void ConfigureUserProfile(EntityTypeBuilder<UserProfile> builder)
@@ -57,6 +89,8 @@ namespace Patpedhi.Infrastructure.Data
 
             builder.Property(ci => ci.account_no)
                 .IsRequired(false);
+
+            builder.Ignore(ci => ci.full_name);
 
         }
     }
