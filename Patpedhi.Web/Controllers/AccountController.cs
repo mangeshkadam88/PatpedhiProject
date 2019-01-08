@@ -74,7 +74,12 @@ namespace Patpedhi.Web.Controllers
                                 redirect_value = "/userprofiles/";
                                 break;
                             case "employee":
-                                redirect_value = "/home/index";
+                                redirect_value = "/UsersSavings/";
+                                break;
+                            case "clientdaily":
+                            case "clientnormal":
+                            case "clientfd":
+                                redirect_value = "/UsersSavingsHistory/";
                                 break;
                             default:
                                 redirect_value = returnUrl;

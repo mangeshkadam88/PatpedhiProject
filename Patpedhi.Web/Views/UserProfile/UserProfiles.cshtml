@@ -92,6 +92,7 @@
             $('#users').dataTable({
                 "processing": true,
                 "pagingType": "full_numbers",
+                "aaSorting": [],
                 "ajax": {
                 "url": '@Url.Action("GetUsers")',
                 "type": "POST",

@@ -97,6 +97,7 @@
             $('#savings').dataTable({
                 "processing": true,
                 "pagingType": "full_numbers",
+                "aaSorting": [],
                 "ajax": {
                 "url": '@Url.Action("GetUsersByRole")',
                 "type": "POST",

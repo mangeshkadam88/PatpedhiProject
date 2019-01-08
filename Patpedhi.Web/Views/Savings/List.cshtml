@@ -39,10 +39,18 @@
                     </div>
                     <div class="row row-break">
                         <div class="col-sm-6">
-                            <strong>Name </strong> - @selected_user.UserProfile.full_name
+                            <strong>User Name </strong> - @selected_user.UserProfile.full_name
                         </div>
                         <div class="col-sm-6">
                             <strong>Account No </strong> - @selected_user.UserProfile.account_no
+                        </div>
+                    </div>
+                    <div class="row row-break">
+                        <div class="col-sm-6">
+                            <a href="/Savings/Save/@selected_user.Id" class="btn btn-primary">Add</a>
+                        </div>
+                        <div class="col-sm-6">
+                            
                         </div>
                     </div>
                     <div class="row">
@@ -98,6 +106,7 @@
             $('#savings').dataTable({
                 "processing": true,
                 "pagingType": "full_numbers",
+                "aaSorting": [],
                 "ajax": {
                 "url": '@Url.Action("GetUsersSavings")',
                 "type": "POST",

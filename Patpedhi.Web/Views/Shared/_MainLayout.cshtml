@@ -140,19 +140,37 @@
                             <li><a href="#"><i class="fa fa-circle-o"></i> Dashboard v1</a></li>
                         </ul>
                     </li>
-                    <li class="treeview">
-                        <a href="#">
-                            <i class="fa fa-users"></i>
-                            <span>Manage Users and Clients</span>
-                            <span class="pull-right-container">
-                                <i class="fa fa-angle-left pull-right"></i>
-                            </span>
-                        </a>
-                        <ul class="treeview-menu">
-                            <li><a href="/UserProfiles/"><i class="fa fa-user"></i> Users</a></li>
-                            <li><a href="/UserProfiles/Save"><i class="fa fa-user-plus"></i> Create</a></li>
-                        </ul>
-                    </li>
+                    @if (loggedinuserrole.ToUpper() == "SUPERADMIN" || loggedinuserrole.ToUpper() == "ADMIN")
+                    {
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-users"></i>
+                                <span>Manage Users and Clients</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu">
+                                <li><a href="/UserProfiles/"><i class="fa fa-user"></i> Users</a></li>
+                                <li><a href="/UserProfiles/Save"><i class="fa fa-user-plus"></i> Create</a></li>
+                            </ul>
+                        </li>
+                    }
+                    @if (loggedinuserrole.ToUpper() == "SUPERADMIN" || loggedinuserrole.ToUpper() == "ADMIN" || loggedinuserrole.ToUpper() == "EMPLOYEE")
+                    {
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-money"></i>
+                                <span>Manage Users Savings</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu">
+                                <li><a href="/UsersSavings/"><i class="fa fa-money"></i> Users Savings</a></li>
+                            </ul>
+                        </li>
+                    }
                 </ul>
             </section>
             <!-- /.sidebar -->
@@ -235,6 +253,8 @@
     <script src="/plugins/bootstrap-validator/dist/js/bootstrapValidator.js"></script>
     <!-- Toastr -->
     <script src="/plugins/toastr/toastr.min.js"></script>
+    <!--Accrue-->
+    <script src="/plugins/accrue/jquery.accrue.js"></script>
     <!-- AdminLTE App -->
     <script src="/dist/js/adminlte.min.js"></script>
     <!-- AdminLTE for demo purposes -->
