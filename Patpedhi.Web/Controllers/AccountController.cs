@@ -5,8 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 using Patpedhi.Infrastructure.Identity;
 using Patpedhi.Web.Interfaces;
 using Patpedhi.Web.ViewModels.Account;
+using Patpedhi.Web.ViewModels.Loan;
 using PatPedhi.Core.Entities.Identity;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Patpedhi.Web.Controllers
@@ -37,7 +39,11 @@ namespace Patpedhi.Web.Controllers
                 ViewData["ReturnUrl"] = "/UserProfiles/";
             }
             ViewData["AccountAlias"] = "login";
-            return View();
+
+            //LoanPaymentModel payments = LoanDataModel.CalculateLoan(DateTime.Now.AddDays(1), "500000", "16", "60");
+
+
+            return View();  
         }
 
         [HttpPost]

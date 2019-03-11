@@ -2,8 +2,14 @@
 @{
     ViewData["Title"] = "Calculate Loan";
     Layout = "~/Views/Shared/_MainLayout.cshtml";
-    Patpedhi.Infrastructure.Identity.ApplicationUser user = ViewBag.loggedinuser;
+    Patpedhi.Infrastructure.Identity.ApplicationUser logged_in_user = ViewBag.loggedinuser;
     string loggedinuserrole = ViewBag.loggedinuserroles;
+    string current_user_role = ViewBag.loggedinuserroles;
+
+    string mode = ViewBag.Mode;
+    Patpedhi.Web.ViewModels.Loan.LoanPaymentModel loan_detail = ViewBag.LoanDetail;
+
+    Patpedhi.Infrastructure.Identity.ApplicationUser selected_user = ViewBag.selecteduser;
 }
 
 <!-- Content Header (Page header) -->
@@ -20,33 +26,233 @@
 <!-- Main content -->
 <section class="content">
     <div class="row">
-        <div class="col-xs-12">
-            <div class="box">
+        <div class="col-md-1"></div>
+        <!-- column -->
+        <div class="col-md-10">
+            <!-- form elements -->
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Save User's Saving</h3>
+                </div>
+                <!-- /.box-header -->
+                <!-- form start -->
+                <form id="loan-form" asp-controller="Loan" asp-action="Save" method="post" enctype="multipart/form-data">
+
+                    <input type="hidden" id="mode" name="mode" value="@mode" />
+
+                    <input type="hidden" id="current_user_role" name="current_user_role" value="@current_user_role" />
+                    <input type="hidden" id="current_user_id" name="current_user_id" value="@logged_in_user.Id" />
+
+                    <input type="hidden" id="selected_user_id" name="selected_user_id" value="@selected_user.Id" />
+
+                    <div class="box-body">
+                        <div class="form-group has-feedback">
+                            <div class="col-sm-6">
+                                <strong>User Name </strong> - @selected_user.UserProfile.full_name
+                            </div>
+                            <div class="col-sm-6">
+                                <strong>Account No </strong> - @selected_user.UserProfile.account_no
+                            </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label>Loan Amount</label>
+                            <input id="loan_amount" name="loan_amount" type="number" class="form-control" placeholder="Loan Amount" step=".01">
+                            <span class="text-danger"></span>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label>Rate of Interest</label>
+                            <input id="rate_of_interest" name="rate_of_interest" type="number" class="form-control" placeholder="Rate of Interest" step=".01">
+                            <span class="text-danger"></span>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label>No of Months</label>
+                            <input id="no_of_months" name="no_of_months" type="number" class="form-control" placeholder="No of Months">
+                            <span class="text-danger"></span>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label>Start Date</label>
+                            <input id="start_date" name="start_date" type="text" class="form-control datemask" placeholder="Start Date" data-inputmask="'alias': 'dd/mm/yyyy'" data-mask>
+                            <span class="text-danger"></span>
+                        </div>
+                        @if (current_user_role.ToUpper() == "SUPERADMIN")
+                        {
+                            <div class="checkbox">
+                                <label>
+                                    <input id="is_approved" name="is_approved" type="checkbox"> <strong>Is Approved?</strong>
+                                </label>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="checkbox">
+                                <label>
+                                    <input id="is_approved" name="is_approved" type="checkbox" disabled> <strong>Is Approved?</strong>
+                                </label>
+                            </div>
+                        }
+                    </div>
+                    <!-- /.box-body -->
+                    <div class="box-footer">
+                        <button id="btnCalculate" type="button" class="btn btn-primary">Calculate</button>
+                        <button id="btnSaveLoan" type="button" class="btn btn-danger" style="display:none;">Save Loan</button>
+                    </div>
+                </form>
+            </div>
+            <!-- /.box -->
+
+            <div id="calculation_box" class="box" style="visibility: hidden;">
                 <div class="box-header">
-                    <h3 class="box-title">Loan</h3>
+                    <h3 class="box-title">Loan Detail</h3>
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
                     <div class="row">
+                        <div class="col-md-12 form-group">
+                            <label>Loan Amount : </label>
+                            <span id="lbl_loan_amount" name="lbl_loan_amount">
+
+                            </span>
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <label>Rate of Interest p.a. : </label>
+                            <span id="lbl_rate_of_interest_per_anum" name="lbl_rate_of_interest_per_anum">
+
+                            </span>
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <label>Rate of Interest p.m. : </label>
+                            <span id="lbl_rate_of_interest_per_month" name="lbl_rate_of_interest_per_month">
+
+                            </span>
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <label>No. of Months : </label>
+                            <span id="lbl_no_of_months" name="lbl_no_of_months">
+
+                            </span>
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <label>Monthly Installments : </label>
+                            <span id="lbl_monthly_installments" name="lbl_monthly_installments">
+
+                            </span>
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <label>Total Repayment : </label>
+                            <span id="lbl_total_repayment" name="lbl_total_repayment">
+
+                            </span>
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <label>Total Interest : </label>
+                            <span id="lbl_total_interest" name="lbl_total_interest">
+
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="row">
                         <div class="col-sm-12">
-                            <div class="calculator"></div>
+                            <table id="loan_detail" class="table responsive table-striped table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Sr No</th>
+                                        <th>Months</th>
+                                        <th>Balance</th>
+                                        <th>Monthly Installments</th>
+                                        <th>Principal</th>
+                                        <th>Interest</th>
+                                        <th>New Balance</th>
+                                    </tr>
+                                </thead>
+                                <tfoot>
+                                    <tr>
+                                        <th>Sr No</th>
+                                        <th>Months</th>
+                                        <th>Balance</th>
+                                        <th>Monthly Installments</th>
+                                        <th>Principal</th>
+                                        <th>Interest</th>
+                                        <th>New Balance</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
                         </div>
                     </div>
                 </div>
                 <!-- /.box-body -->
             </div>
             <!-- /.box -->
+
         </div>
-        <!-- /.col -->
+        <div class="col-md-1"></div>
     </div>
     <!-- /.row -->
 </section>
 <!-- /.content -->
+<!-- /.content -->
 @section Scripts{
     <script>
+        function calculateLoan() {
+
+            $.ajax({
+                url: '/Loan/AjaxCalculateLoan',
+                data: {
+                    _startDate: $('#start_date').val(),
+                    _principal: $('#loan_amount').val(),
+                    _interestRate: $('#rate_of_interest').val(),
+                    _period: $('#no_of_months').val(),
+                    user_id: '@selected_user.Id'
+                }
+            })
+                .done(function (result) {
+                // bind table
+                console.log(result);
+                var trHTML = '<tbody>';
+                $.each(result.data.ampts, function (i, item) {
+                    trHTML += '<tr><td>' + item.row_number + '</td><td>' + item.date + '</td><td>' + item.initial_balance + '</td><td>' + item.monthly_installment + '</td><td>' + item.principal + '</td><td>' + item.interest + '</td><td>' + item.new_balance + '</td></tr>';
+                });
+                trHTML += '</tbody>';
+                $("#loan_detail > tbody > tr").empty();
+                $('#loan_detail').append(trHTML);
+                 $('#loan_detail').dataTable({
+                        "searching": false,
+                        //"pageLength": 500,
+                        "bPaginate": false,
+                        dom: 'Bfrtip',
+                        autoWidth: false,
+                        responsive: true,
+                        "ordering": false,
+                        buttons: [
+                            'copyHtml5',
+                            'excelHtml5',
+                            'csvHtml5',
+                            'pdfHtml5'
+                        ]
+                    });
+                    var loan_table = $('#loan_detail').DataTable();
+                    loan_table.columns.adjust().responsive.rebuild();
+                    loan_table.columns.adjust().responsive.recalc();
+
+                // bind headers data
+                    $('#lbl_loan_amount').text(result.data.loan_amount_string);
+
+                    $('#lbl_rate_of_interest_per_anum').text(result.data.rate_of_interest_p_a);
+                    $('#lbl_rate_of_interest_per_month').text(result.data.rate_of_interest_p_m);
+                    $('#lbl_no_of_months').text(result.data.year_of_loan * result.data.no_of_payment_per_year);
+                    $('#lbl_monthly_installments').text(result.data.monthly_installments);
+                    $('#lbl_total_repayment').text(result.data.total_repayment);
+                    $('#lbl_total_interest').text(result.data.total_interest);
+
+                    //$('#calculation_box').show();
+                    $('#calculation_box').css('visibility', 'visible');
+                    $('#btnSaveLoan').show();
+            });
+        }
+
         $(document).ready(function () {
-            $(".calculator").accrue({
-                mode: "amortization"
+            $("#btnCalculate").click(function () {
+                calculateLoan();
             });
         });
     </script>

@@ -40,7 +40,7 @@ namespace Patpedhi.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> GetUsersByRole(string role, string filter, string user_type)
         {
-            List<UsersDataModel> users = await _userProfileService.GetAllUsersForCurrentUser(role, _userManager, filter, user_type);
+            List<UsersDataModel> users = await _userProfileService.GetAllClientsForCurrentUser(role, _userManager, filter, false);
             return Json(new
             {
                 iTotalRecords = users.Count,

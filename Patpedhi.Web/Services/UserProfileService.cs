@@ -84,6 +84,7 @@ namespace Patpedhi.Web.Services
                     usersInRole.AddRange(await _userManager.GetUsersInRoleAsync("Employee"));
                     usersInRole.AddRange(await _userManager.GetUsersInRoleAsync("ClientDaily"));
                     usersInRole.AddRange(await _userManager.GetUsersInRoleAsync("ClientNormal"));
+                    usersInRole.AddRange(await _userManager.GetUsersInRoleAsync("ClientFD"));
                     usersInRole.AddRange(await _userManager.GetUsersInRoleAsync("ClientLoan"));
                 }
             }
@@ -108,6 +109,52 @@ namespace Patpedhi.Web.Services
                     udm.account_number = Convert.ToString(user.UserProfile.account_no);
                     udm.date_of_birth_string = user.UserProfile.date_of_birth.ToString("dd/MM/yyyy");
                     
+                    var roles = await _userManager.GetRolesAsync(user);
+                    string role_name = roles.Count > 0 ? roles[0] : "Role Not Found!";
+                    udm.role_string = role_name;
+
+                    udm.is_approved_string = user.UserProfile.is_approved.ToString();
+                    udm.is_active_string = user.UserProfile.is_active.ToString();
+                    user_data_model_list.Add(udm);
+                }
+            }
+
+            return user_data_model_list;
+        }
+
+        public async Task<List<UsersDataModel>> GetAllClientsForCurrentUser(string role, UserManager<ApplicationUser> _userManager, string filter, bool loan_users)
+        {
+            List<UsersDataModel> user_data_model_list = new List<UsersDataModel>();
+            List<ApplicationUser> usersInRole = new List<ApplicationUser>();
+            if (loan_users)
+                usersInRole.AddRange(await _userManager.GetUsersInRoleAsync("ClientLoan"));
+            else
+            {
+                usersInRole.AddRange(await _userManager.GetUsersInRoleAsync("ClientDaily"));
+                usersInRole.AddRange(await _userManager.GetUsersInRoleAsync("ClientNormal"));
+                usersInRole.AddRange(await _userManager.GetUsersInRoleAsync("ClientFD"));
+            }
+            bool match_with_filter = false;
+            foreach (ApplicationUser user in usersInRole)
+            {
+                user.UserProfile = await GetUserProfileById(user.Id);
+                if (filter == "active")
+                    match_with_filter = user.UserProfile.is_active;
+                else if (filter == "inactive")
+                    match_with_filter = !user.UserProfile.is_active;
+                else
+                    match_with_filter = !user.UserProfile.is_approved;
+
+                if (match_with_filter)
+                {
+                    UsersDataModel udm = new UsersDataModel();
+                    udm.user_id = user.Id;
+                    udm.first_name = user.UserProfile.first_name;
+                    udm.middle_name = user.UserProfile.middle_name;
+                    udm.last_name = user.UserProfile.last_name;
+                    udm.account_number = Convert.ToString(user.UserProfile.account_no);
+                    udm.date_of_birth_string = user.UserProfile.date_of_birth.ToString("dd/MM/yyyy");
+
                     var roles = await _userManager.GetRolesAsync(user);
                     string role_name = roles.Count > 0 ? roles[0] : "Role Not Found!";
                     udm.role_string = role_name;

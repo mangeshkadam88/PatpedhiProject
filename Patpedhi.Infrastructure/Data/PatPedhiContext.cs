@@ -21,6 +21,77 @@ namespace Patpedhi.Infrastructure.Data
             base.OnModelCreating(builder);
             builder.Entity<UserProfile>(ConfigureUserProfile);
             builder.Entity<Savings>(ConfigureSavings);
+            builder.Entity<Loans>(ConfigureLoans);
+            builder.Entity<LoansHistory>(ConfigureLoansHistory);
+        }
+
+        private void ConfigureLoansHistory(EntityTypeBuilder<LoansHistory> builder)
+        {
+            builder.ToTable("LoansHistory");
+            builder.HasKey(ci => ci.Id);
+
+            builder.Property(ci => ci.loan_id)
+                .IsRequired(true);
+            builder.HasOne<Loans>()
+                    .WithMany()
+                    .HasForeignKey(x => x.loan_id);
+
+            builder.Property(ci => ci.emi_paid)
+                .IsRequired(true);
+
+            builder.Property(ci => ci.date_paid)
+                .IsRequired(true);
+
+            builder.Property(ci => ci.is_active)
+                .IsRequired(true);
+
+            builder.Property(ci => ci.is_approved)
+                .IsRequired(true);
+
+            builder.Property(ci => ci.added_by)
+                .IsRequired(true);
+
+            builder.Property(ci => ci.description)
+                .HasColumnType("nvarchar(max)");
+        }
+
+        private void ConfigureLoans(EntityTypeBuilder<Loans> builder)
+        {
+            builder.ToTable("Loans");
+            builder.HasKey(ci => ci.Id);
+
+            builder.Property(ci => ci.user_id)
+                .IsRequired(true);
+
+            builder.Property(ci => ci.amount)
+                .IsRequired(true);
+
+            builder.Property(ci => ci.interest_rate)
+                .IsRequired(true);
+
+            builder.Property(ci => ci.monthly_emi)
+                .IsRequired(true);
+
+            builder.Property(ci => ci.StartDate)
+                .IsRequired(true);
+
+            builder.Property(ci => ci.EndDate)
+                .IsRequired(true);
+
+            builder.Property(ci => ci.is_active)
+                .IsRequired(true);
+
+            builder.Property(ci => ci.is_approved)
+                .IsRequired(true);
+
+            builder.Property(ci => ci.added_by)
+                .IsRequired(true);
+
+            builder.Property(ci => ci.no_of_months)
+                .IsRequired(true);
+
+            builder.Property(ci => ci.description)
+                .HasColumnType("nvarchar(max)");
         }
 
         private void ConfigureSavings(EntityTypeBuilder<Savings> builder)

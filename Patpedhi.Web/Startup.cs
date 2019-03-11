@@ -50,6 +50,7 @@ namespace Patpedhi.Web
 
             services.AddScoped<IUserProfileService, UserProfileService>();
             services.AddScoped<ISavingsService, SavingsService>();
+            services.AddScoped<ILoanService, LoansService>();
 
             // Add memory cache services
             services.AddMemoryCache();
